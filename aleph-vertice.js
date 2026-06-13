@@ -199,6 +199,12 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
   document.querySelectorAll('.reveal, .stagger').forEach(el => revIO.observe(el));
 
+  /* bidirectional reveal — animates IN on enter, OUT on leave (Why / Services / Target) */
+  const biIO = new IntersectionObserver((ents) => {
+    ents.forEach(e => e.target.classList.toggle('inview', e.isIntersecting));
+  }, { threshold: 0.16, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.anim2').forEach(el => biIO.observe(el));
+
   /* ───────────────────────────────────────────────
      3 · NAV — hide on scroll-down, glass, dark-aware
   ─────────────────────────────────────────────── */
@@ -210,7 +216,6 @@
     nav.classList.toggle('scrolled', y > 36);
     const overHero = y < (heroEl.offsetHeight - 80);
     nav.classList.toggle('on-dark', overHero);
-    nav.classList.toggle('hidden', y > lastY && y > 220);
     lastY = y; tick = false;
     // reading progress
     const h = document.documentElement;
