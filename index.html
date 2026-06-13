@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aleph BI — Inteligencia pura. Sistemas seguros.</title>
+<script>document.documentElement.className += ' js';</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..500&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white:#FFFFFF; --off-white:#F2F2F0; --navy:#082338; --navy-2:#0c2e48; --navy-3:#123f64;
+    --green:#ABC9B5; --green-deep:#7da78b; --teal:#7DAAA8;
+    --green-dim:rgba(171,201,181,0.15); --green-mid:rgba(171,201,181,0.35); --green-border:rgba(171,201,181,0.5);
+    --navy-dim:rgba(8,35,56,0.07); --black:#06141f; --gray:#4A5568; --gray-light:#6B7280;
+    --border:#E8E6E1; --border-dark:rgba(8,35,56,0.14);
+    --r-pill:100px; --r-card:18px; --r-sm:10px;
+    --shadow-sm:0 1px 4px rgba(8,35,56,0.08); --shadow-md:0 6px 24px rgba(8,35,56,0.10); --shadow-lg:0 16px 52px rgba(8,35,56,0.15);
+    --ease:cubic-bezier(0.25,0.46,0.45,0.94); --ease-out:cubic-bezier(0.16,1,0.3,1);
+    --display:'Fraunces',Georgia,'Times New Roman',serif;
+    --body:'Inter',system-ui,-apple-system,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,'SF Mono',monospace;
+    --maxw:1160px;
+  }
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:var(--body); background:var(--white); color:var(--black); line-height:1.7;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
+  ::selection { background:var(--green); color:var(--navy); }
+  a { color:inherit; text-decoration:none; }
+
+  /* shared type */
+  .eyebrow { font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:2.5px;
+    text-transform:uppercase; color:var(--green-deep); display:inline-flex; align-items:center; gap:10px; margin-bottom:22px; }
+  .eyebrow .dot { width:6px; height:6px; border-radius:50%; background:var(--green); flex-shrink:0; }
+  .on-navy .eyebrow { color:var(--green); }
+  .sec-title { font-family:var(--display); font-weight:500; letter-spacing:-1.2px; line-height:1.04;
+    font-size:clamp(34px,5vw,60px); color:var(--navy); }
+  .on-navy .sec-title { color:#fff; }
+  .sec-lead { font-size:clamp(16px,1.4vw,18px); font-weight:300; color:var(--gray); line-height:1.75; max-width:560px; margin-top:22px; }
+  .on-navy .sec-lead { color:rgba(255,255,255,0.6); }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding-left:clamp(20px,5vw,56px); padding-right:clamp(20px,5vw,56px); }
+  section { position:relative; }
+  .sec-head { max-width:760px; margin-bottom:56px; }
+
+  .reveal { opacity:0; transform:translateY(34px); transition:opacity .9s var(--ease-out), transform .9s var(--ease-out); }
+  .reveal.vis { opacity:1; transform:none; }
+  .reveal.d1{transition-delay:.08s} .reveal.d2{transition-delay:.16s} .reveal.d3{transition-delay:.24s} .reveal.d4{transition-delay:.32s}
+  .stagger > * { opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+  .stagger.run > *:nth-child(1){transition-delay:.0s} .stagger.run > *:nth-child(2){transition-delay:.08s}
+  .stagger.run > *:nth-child(3){transition-delay:.16s} .stagger.run > *:nth-child(4){transition-delay:.24s}
+  .stagger.run > *:nth-child(5){transition-delay:.32s} .stagger.run > *:nth-child(6){transition-delay:.40s}
+  .stagger.run > * { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){ .reveal,.stagger>*{opacity:1!important;transform:none!important} }
+
+  /* reading bar */
+  #readbar { position:fixed; top:0; left:0; height:2px; width:100%; transform:scaleX(0); transform-origin:left;
+    background:linear-gradient(90deg,var(--green),var(--teal)); z-index:200; }
+
+  /* ───────── NAV ───────── */
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; height:74px; display:flex; align-items:center;
+    justify-content:space-between; padding:0 clamp(20px,5vw,56px);
+    transition:transform .5s var(--ease-out), background .4s var(--ease), border-color .4s var(--ease); border-bottom:1px solid transparent; }
+  nav.scrolled { background:rgba(255,255,255,0.82); backdrop-filter:blur(20px) saturate(1.6);
+    -webkit-backdrop-filter:blur(20px) saturate(1.6); border-bottom:1px solid var(--border); }
+  nav.hidden { transform:translateY(-100%); }
+  .nav-logo { height:28px; position:relative; }
+  .nav-logo img { height:28px; width:auto; display:block; transition:opacity .35s var(--ease); }
+  .nav-logo .lw { position:absolute; top:0; left:0; }
+  nav.on-dark:not(.scrolled) .ln { opacity:0; }
+  nav:not(.on-dark) .lw, nav.scrolled .lw { opacity:0; }
+  .nav-links { display:flex; align-items:center; gap:2px; list-style:none; }
+  .nav-links a { font-family:var(--mono); font-size:11px; letter-spacing:.4px; color:var(--gray);
+    padding:8px 14px; border-radius:var(--r-pill); transition:color .25s,background .25s; }
+  nav.on-dark:not(.scrolled) .nav-links a { color:rgba(255,255,255,0.7); }
+  .nav-links a:hover { color:var(--navy); background:var(--navy-dim); }
+  nav.on-dark:not(.scrolled) .nav-links a:hover { color:#fff; background:rgba(255,255,255,0.1); }
+  .nav-cta { font-family:var(--body); font-size:12.5px; font-weight:600; padding:10px 22px; border-radius:var(--r-pill);
+    background:var(--navy); color:#fff!important; border:1.5px solid var(--navy); transition:all .3s var(--ease); white-space:nowrap; }
+  .nav-cta:hover { background:transparent; color:var(--navy)!important; box-shadow:var(--shadow-md); }
+  nav.on-dark:not(.scrolled) .nav-cta { background:var(--green); border-color:var(--green); color:var(--navy)!important; }
+  nav.on-dark:not(.scrolled) .nav-cta:hover { background:transparent; color:#fff!important; border-color:rgba(255,255,255,0.5); }
+  @media (max-width:900px){ .nav-links{display:none;} }
+
+  /* ───────── BUTTONS ───────── */
+  .btn { display:inline-flex; align-items:center; gap:9px; font-family:var(--body); font-size:13.5px; font-weight:600;
+    padding:14px 30px; border-radius:var(--r-pill); cursor:pointer; border:1.5px solid transparent; transition:all .35s var(--ease-out); }
+  .btn svg { transition:transform .35s var(--ease-out); }
+  .btn:hover svg { transform:translateX(4px); }
+  .btn-fill { background:var(--green); color:var(--navy); border-color:var(--green); }
+  .btn-fill:hover { background:#fff; border-color:#fff; box-shadow:var(--shadow-lg); }
+  .btn-outline { background:transparent; color:#fff; border-color:rgba(255,255,255,0.3); }
+  .btn-outline:hover { background:#fff; color:var(--navy); border-color:#fff; }
+  .on-light .btn-fill { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .on-light .btn-fill:hover { background:var(--green); color:var(--navy); border-color:var(--green); }
+  .on-light .btn-outline { color:var(--navy); border-color:var(--border-dark); }
+  .on-light .btn-outline:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
+
+  /* ═════════ HERO ═════════ */
+  #hero { min-height:100vh; display:flex; align-items:center; background:var(--navy); overflow:hidden; }
+  #net { position:absolute; inset:0; z-index:0; }
+  .hero-glow { position:absolute; z-index:0; width:60vw; height:60vw; max-width:760px; max-height:760px;
+    left:42%; top:46%; transform:translate(-50%,-50%); border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle, rgba(171,201,181,0.16), transparent 62%); filter:blur(20px);
+    animation:glowDrift 16s ease-in-out infinite alternate; }
+  @keyframes glowDrift { 0%{transform:translate(-54%,-52%) scale(1)} 100%{transform:translate(-44%,-44%) scale(1.14)} }
+  .hero-inner { position:relative; z-index:3; width:100%; padding-top:96px; padding-bottom:70px; pointer-events:none; }
+  .hero-inner a { pointer-events:auto; }
+  .hero-tag { display:inline-flex; align-items:center; gap:10px; padding:8px 18px 8px 10px; border-radius:var(--r-pill);
+    background:rgba(255,255,255,0.05); border:1px solid rgba(171,201,181,0.28); font-family:var(--mono);
+    font-size:11px; letter-spacing:1.4px; text-transform:uppercase; color:var(--green); margin-bottom:32px; }
+  .hero-tag .pin { padding:3px 9px; border-radius:var(--r-pill); background:var(--green); color:var(--navy); font-weight:600; letter-spacing:.6px; }
+  .hero-title { font-family:var(--display); font-weight:500; font-size:clamp(46px,8vw,104px); line-height:1.0;
+    letter-spacing:-2.5px; color:#fff; max-width:13em; }
+  .hero-title .accent { color:var(--green); font-style:italic; }
+  .hero-title .line { display:block; overflow:hidden; }
+  .hero-title .line > span { display:block; }
+  @keyframes lineRise { from { transform:translateY(106%); } to { transform:translateY(0); } }
+  .hero-sub { font-size:clamp(16px,1.7vw,20px); font-weight:300; line-height:1.65; color:rgba(255,255,255,0.72);
+    max-width:600px; margin-top:32px; }
+  .hero-sub strong { font-weight:500; color:#fff; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+  .hero-cta { display:flex; flex-wrap:wrap; gap:14px; margin-top:42px; }
+  .hero-meta { display:flex; flex-wrap:wrap; gap:34px; margin-top:56px; padding-top:30px;
+    border-top:1px solid rgba(255,255,255,0.12); max-width:680px; }
+  .hero-meta .m b { font-family:var(--mono); font-weight:500; font-size:13px; color:var(--green); letter-spacing:.3px; display:block; }
+  .hero-meta .m span { font-size:12.5px; color:rgba(255,255,255,0.5); font-weight:300; }
+  .scroll-cue { position:absolute; bottom:26px; left:50%; transform:translateX(-50%); z-index:4;
+    display:flex; flex-direction:column; align-items:center; gap:8px; }
+
+  /* Hero text is statically visible in every context — foreground, background-load,
+     export/PDF, reduced-motion. The hero's motion comes from the living vertex
+     network + glow drift, never from hiding the text. */
+  .scroll-cue span { font-family:var(--mono); font-size:9.5px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.4); }
+  .scroll-cue .barv { width:1px; height:40px; background:rgba(255,255,255,0.2); overflow:hidden; position:relative; }
+  .scroll-cue .barv::after { content:''; position:absolute; inset:0; background:var(--green); animation:cue 2.4s var(--ease-out) infinite; }
+  @keyframes cue { 0%{transform:translateY(-100%)} 55%,100%{transform:translateY(100%)} }
+  @media (max-height:860px){ .scroll-cue{ display:none; } }
+
+  /* ═════════ THESIS ═════════ */
+  #thesis { padding:clamp(90px,12vw,150px) 0; background:var(--off-white); }
+  .thesis-statement { font-family:var(--display); font-weight:500; letter-spacing:-1px; line-height:1.18;
+    font-size:clamp(28px,3.8vw,46px); color:var(--navy); max-width:18ch; }
+  .thesis-statement em { font-style:italic; color:var(--green-deep); }
+  .thesis-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(40px,6vw,80px); align-items:center; }
+  .thesis-body p { font-size:16px; color:var(--gray); font-weight:300; line-height:1.85; margin-bottom:20px; }
+  .thesis-body p strong { color:var(--navy); font-weight:600; }
+  .thesis-quote { margin-top:28px; padding-left:22px; border-left:3px solid var(--green); font-family:var(--display);
+    font-weight:500; font-size:19px; color:var(--navy); line-height:1.4; font-style:italic; }
+  @media (max-width:860px){ .thesis-grid{grid-template-columns:1fr; gap:34px;} }
+
+  /* pipeline */
+  #pipeline { margin-top:clamp(56px,7vw,84px); }
+  .pipe-track { display:flex; align-items:stretch; position:relative; }
+  .pipe-line { position:absolute; top:7px; left:0; right:0; height:1.5px; background:var(--border-dark); z-index:0; }
+  .pipe-line .fill { position:absolute; inset:0; background:var(--green); transform:scaleX(0); transform-origin:left; transition:transform 1.8s var(--ease-out); }
+  .pstep { flex:1; padding:0 16px; position:relative; }
+  .pstep .node { width:16px; height:16px; border-radius:50%; background:var(--off-white); border:2px solid var(--border-dark);
+    position:relative; z-index:2; margin-bottom:24px; transition:all .4s var(--ease); }
+  .pstep.lit .node { border-color:var(--green); background:var(--green); box-shadow:0 0 0 6px rgba(171,201,181,0.18); }
+  .pstep .pn { font-family:var(--mono); font-size:12px; color:var(--green-deep); letter-spacing:1px; margin-bottom:8px; }
+  .pstep h4 { font-family:var(--display); font-weight:600; font-size:21px; color:var(--navy); letter-spacing:-.3px; margin-bottom:8px; }
+  .pstep p { font-size:12.5px; color:var(--gray-light); font-weight:300; line-height:1.6; padding-right:10px; }
+  @media (max-width:820px){
+    .pipe-track{flex-direction:column; gap:6px;}
+    .pipe-line{left:7px;right:auto;top:0;bottom:0;width:1.5px;height:100%;}
+    .pipe-line .fill{transform-origin:top; transform:scaleY(0);}
+    .pstep{padding:6px 0 18px 38px;}
+    .pstep .node{position:absolute;left:0;top:6px;margin:0;}
+  }
+
+  /* ═════════ LAYERS (three capas) ═════════ */
+  #layers { padding:clamp(90px,12vw,150px) 0; background:var(--white); overflow:hidden; }
+  .layers-grid { display:grid; grid-template-columns:0.9fr 1.1fr; gap:clamp(40px,6vw,80px); align-items:center; }
+  .stack { position:relative; height:430px; perspective:1400px; }
+  .layer { position:absolute; left:0; right:0; height:150px; border-radius:var(--r-card); padding:26px 30px;
+    display:flex; flex-direction:column; justify-content:center; transition:transform 1s var(--ease-out), opacity .8s var(--ease-out), box-shadow .4s var(--ease);
+    transform-style:preserve-3d; opacity:0; }
+  .layer .l-row { display:flex; align-items:center; gap:16px; }
+  .layer .l-ico { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .layer .l-ico svg { width:22px; height:22px; fill:none; stroke-width:1.7; }
+  .layer .l-tag { font-family:var(--mono); font-size:10px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+  .layer h4 { font-family:var(--display); font-weight:600; font-size:22px; letter-spacing:-.4px; }
+  .layer p { font-size:12.5px; font-weight:300; line-height:1.6; margin-top:12px; }
+  /* collapsed (pre-reveal): stacked center */
+  .layer.l1 { background:var(--navy); color:#fff; transform:translateY(140px) scale(.9); z-index:1; }
+  .layer.l1 .l-ico { background:rgba(171,201,181,0.14); } .layer.l1 .l-ico svg { stroke:var(--green); }
+  .layer.l1 .l-tag { color:var(--green); } .layer.l1 p { color:rgba(255,255,255,0.55); }
+  .layer.l2 { background:var(--off-white); color:var(--navy); border:1px solid var(--border-dark); transform:translateY(140px) scale(.94); z-index:2; }
+  .layer.l2 .l-ico { background:var(--green-dim); } .layer.l2 .l-ico svg { stroke:var(--green-deep); }
+  .layer.l2 .l-tag { color:var(--green-deep); } .layer.l2 p { color:var(--gray); }
+  .layer.l3 { background:var(--green); color:var(--navy); transform:translateY(140px) scale(.98); z-index:3; }
+  .layer.l3 .l-ico { background:rgba(8,35,56,0.1); } .layer.l3 .l-ico svg { stroke:var(--navy); }
+  .layer.l3 .l-tag { color:var(--navy); opacity:.65; } .layer.l3 p { color:rgba(8,35,56,0.7); }
+  /* revealed: fan out */
+  .stack.vis .layer { opacity:1; box-shadow:var(--shadow-lg); }
+  .stack.vis .layer.l1 { transform:translateY(0) rotateX(2deg); }
+  .stack.vis .layer.l2 { transform:translateY(150px) rotateX(2deg); }
+  .stack.vis .layer.l3 { transform:translateY(300px) rotateX(2deg); }
+  .stack .layer:hover { transform:translateY(var(--ty,0)) translateX(10px) !important; z-index:9; }
+  .stack.vis .layer.l1:hover { --ty:0; } .stack.vis .layer.l2:hover { --ty:150px; } .stack.vis .layer.l3:hover { --ty:300px; }
+  @media (max-width:860px){
+    .layers-grid{grid-template-columns:1fr; gap:34px;}
+    .stack{height:auto; perspective:none; display:flex; flex-direction:column; gap:14px;}
+    .layer{position:relative; height:auto; transform:none!important; opacity:1!important; box-shadow:var(--shadow-md);}
+  }
+
+  /* ═════════ TRUST TRIANGLE (dark) ═════════ */
+  #trust { padding:clamp(90px,12vw,150px) 0; background:var(--navy); color:#fff; overflow:hidden; }
+  .trust-figure { position:relative; margin-top:56px; }
+  .trust-svg { position:absolute; left:50%; top:-10px; transform:translateX(-50%); width:min(560px,90%); height:calc(100% + 20px); z-index:0; pointer-events:none; }
+  .trust-svg path { stroke:var(--green); stroke-width:1.2; fill:none; opacity:.3; vector-effect:non-scaling-stroke;
+    stroke-dasharray:1000; stroke-dashoffset:1000; }
+  #trust.drawn .trust-svg path { animation:drawT 2s var(--ease-out) forwards; }
+  @keyframes drawT { to { stroke-dashoffset:0; } }
+  .triad { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; position:relative; z-index:1; }
+  .tri { padding:34px 28px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+    border-radius:var(--r-card); border-top:3px solid var(--green); transition:background .3s,transform .3s var(--ease); }
+  .tri:nth-child(2){ border-top-color:var(--teal); } .tri:nth-child(3){ border-top-color:rgba(171,201,181,0.4); }
+  .tri:hover { background:rgba(255,255,255,0.09); transform:translateY(-4px); }
+  .tri .t-ico { width:42px; height:42px; border-radius:11px; background:rgba(171,201,181,0.12);
+    border:1px solid rgba(171,201,181,0.25); display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+  .tri .t-ico svg { width:21px; height:21px; fill:none; stroke:var(--green); stroke-width:1.7; }
+  .tri h4 { font-family:var(--display); font-weight:600; font-size:20px; letter-spacing:-.3px; margin-bottom:10px; }
+  .tri p { font-size:13px; color:rgba(255,255,255,0.55); font-weight:300; line-height:1.7; margin-bottom:16px; }
+  .tri .t-tag { display:inline-block; font-family:var(--mono); font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--green); background:rgba(171,201,181,0.12); border:1px solid rgba(171,201,181,0.25); padding:4px 12px; border-radius:var(--r-pill); }
+  @media (max-width:820px){ .triad{grid-template-columns:1fr;} .trust-svg{display:none;} }
+
+  /* ═════════ ARCHETYPES ═════════ */
+  #arch { padding:clamp(90px,12vw,150px) 0; background:var(--off-white); }
+  .arch-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:44px; }
+  .arch-card { border-radius:var(--r-card); padding:42px 38px; transition:all .4s var(--ease-out); position:relative; overflow:hidden; }
+  .arch-card.main { background:var(--white); border:1px solid var(--border-dark); }
+  .arch-card.sup { background:var(--navy); color:#fff; }
+  .arch-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+  .arch-tag { display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    padding:4px 12px; border-radius:var(--r-pill); margin-bottom:20px; }
+  .arch-card.main .arch-tag { color:var(--navy); background:var(--green-dim); border:1px solid var(--green-border); }
+  .arch-card.sup .arch-tag { color:#fff; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.28); }
+  .arch-card h3 { font-family:var(--display); font-weight:600; font-size:30px; letter-spacing:-.4px; margin-bottom:10px; }
+  .arch-card.main h3 { color:var(--navy); } .arch-card.sup h3 { color:#fff; }
+  .arch-quote { font-style:italic; font-size:14px; color:var(--gray-light); line-height:1.6; margin-bottom:18px; }
+  .arch-card.sup .arch-quote { color:rgba(255,255,255,0.5); }
+  .arch-card p { font-size:13.5px; font-weight:300; line-height:1.75; }
+  .arch-card.main p { color:var(--gray); } .arch-card.sup p { color:rgba(255,255,255,0.55); }
+  .arch-note { margin-top:28px; font-family:var(--display); font-style:italic; font-size:clamp(18px,2.4vw,26px);
+    color:var(--navy); font-weight:500; letter-spacing:-.3px; }
+  @media (max-width:760px){ .arch-grid{grid-template-columns:1fr;} }
+
+  /* ═════════ WHY / RTBs ═════════ */
+  #why { padding:clamp(90px,12vw,150px) 0; background:var(--white); }
+  .rtbs { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:56px; }
+  .rtb { padding:38px 32px; background:var(--off-white); border:1px solid var(--border); border-radius:var(--r-card);
+    transition:all .4s var(--ease-out); }
+  .rtb:hover { background:var(--white); border-color:var(--green-border); box-shadow:var(--shadow-lg); transform:translateY(-5px); }
+  .rtb .rn { font-family:var(--mono); font-weight:500; font-size:34px; color:var(--green-deep); letter-spacing:-1px; line-height:1; margin-bottom:18px; }
+  .rtb h4 { font-family:var(--display); font-weight:600; font-size:19px; color:var(--navy); letter-spacing:-.3px; line-height:1.25; margin-bottom:12px; }
+  .rtb p { font-size:13.5px; color:var(--gray); font-weight:300; line-height:1.75; }
+  @media (max-width:860px){ .rtbs{grid-template-columns:1fr;} }
+
+  /* ═════════ METRICS ═════════ */
+  #metrics { padding:clamp(80px,9vw,118px) 0; background:var(--navy); color:#fff; overflow:hidden; }
+  .met-glow { position:absolute; inset:0; z-index:0; background:radial-gradient(ellipse 50% 70% at 80% 50%, rgba(171,201,181,0.10), transparent 60%); }
+  .met-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; position:relative; z-index:1; }
+  .met { border-left:2px solid var(--green-border); padding-left:22px; }
+  .met .val { font-family:var(--display); font-weight:500; letter-spacing:-2px; line-height:1; font-size:clamp(44px,6vw,72px); color:#fff; }
+  .met .val .suf { color:var(--green); }
+  .met .lab { font-size:13px; color:rgba(255,255,255,0.55); font-weight:300; margin-top:12px; line-height:1.5; }
+  @media (max-width:820px){ .met-grid{grid-template-columns:1fr 1fr; gap:36px 24px;} }
+
+  /* ═════════ SERVICES ═════════ */
+  #services { padding:clamp(90px,12vw,150px) 0; background:var(--off-white); }
+  .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .svc { position:relative; background:var(--white); border:1px solid var(--border-dark); border-radius:var(--r-card);
+    padding:34px 30px; overflow:hidden; transition:transform .4s var(--ease-out), box-shadow .4s var(--ease-out), border-color .4s var(--ease); }
+  .svc::before { content:''; position:absolute; left:0; top:0; height:3px; width:100%; background:var(--green);
+    transform:scaleX(0); transform-origin:left; transition:transform .45s var(--ease-out); }
+  .svc:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); border-color:transparent; }
+  .svc:hover::before { transform:scaleX(1); }
+  .svc-ico { width:50px; height:50px; border-radius:13px; background:var(--green-dim); display:flex; align-items:center;
+    justify-content:center; margin-bottom:22px; transition:background .4s var(--ease); }
+  .svc:hover .svc-ico { background:var(--navy); }
+  .svc-ico svg { width:24px; height:24px; stroke:var(--green-deep); fill:none; stroke-width:1.6; transition:stroke .4s var(--ease); }
+  .svc:hover .svc-ico svg { stroke:var(--green); }
+  .svc h3 { font-family:var(--display); font-weight:600; font-size:20px; color:var(--navy); letter-spacing:-.3px; margin-bottom:8px; }
+  .svc p { font-size:13px; color:var(--gray); font-weight:300; line-height:1.7; margin-bottom:14px; }
+  .svc-badge { display:inline-block; font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+    padding:4px 11px; border-radius:var(--r-pill); background:var(--green-dim); color:var(--navy); border:1px solid var(--green-border); }
+  .svc .num { position:absolute; top:28px; right:30px; font-family:var(--mono); font-size:12px; color:var(--border-dark); }
+  @media (max-width:980px){ .svc-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:620px){ .svc-grid{grid-template-columns:1fr;} }
+
+  /* ═════════ TARGET ═════════ */
+  #target { padding:clamp(90px,12vw,150px) 0; background:var(--white); }
+  .tgt-grid { display:grid; grid-template-columns:0.9fr 1.1fr; gap:clamp(40px,6vw,80px); align-items:start; }
+  .tgt-cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .tgt-c { background:var(--off-white); border:1px solid var(--border); border-radius:var(--r-card); padding:28px 26px; transition:all .4s var(--ease-out); }
+  .tgt-c:hover { background:#fff; border-color:var(--green-border); box-shadow:var(--shadow-md); transform:translateY(-4px); }
+  .tgt-c .tc-ico { width:46px; height:46px; margin-bottom:18px; }
+  .tgt-c .tc-ico svg { width:46px; height:46px; stroke:var(--navy); fill:none; stroke-width:1.3; }
+  .tgt-c h4 { font-family:var(--display); font-weight:600; font-size:19px; color:var(--navy); letter-spacing:-.3px; margin-bottom:6px; }
+  .tgt-c p { font-size:12.5px; color:var(--gray-light); font-weight:300; line-height:1.6; }
+  .chips { display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; }
+  .chip { font-family:var(--mono); font-size:11.5px; padding:8px 16px; border-radius:var(--r-pill);
+    background:var(--white); border:1px solid var(--border-dark); color:var(--navy); transition:all .3s var(--ease); }
+  .chip:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .fit { margin-top:28px; padding:26px; border-radius:var(--r-card); background:var(--navy); color:#fff; }
+  .fit .fk { font-family:var(--display); font-weight:500; font-size:clamp(34px,4vw,46px); color:var(--green); letter-spacing:-1.5px; line-height:1; }
+  .fit .fl { font-size:13px; color:rgba(255,255,255,0.6); font-weight:300; margin-top:8px; }
+  @media (max-width:900px){ .tgt-grid{grid-template-columns:1fr;} }
+  @media (max-width:480px){ .tgt-cards{grid-template-columns:1fr;} }
+
+  /* ═════════ CTA + FOUNDERS ═════════ */
+  #cta { padding:clamp(100px,14vw,168px) 0; background:var(--navy); color:#fff; overflow:hidden; text-align:center; }
+  .cta-glow { position:absolute; inset:0; z-index:0; background:radial-gradient(circle at 50% 40%, rgba(171,201,181,0.16), transparent 58%); }
+  .cta-inner { position:relative; z-index:2; max-width:840px; margin:0 auto; }
+  .cta-title { font-family:var(--display); font-weight:500; letter-spacing:-2px; line-height:1.05;
+    font-size:clamp(38px,6.5vw,82px); color:#fff; }
+  .cta-title .accent { color:var(--green); font-style:italic; }
+  .cta-sub { font-size:clamp(16px,1.5vw,19px); font-weight:300; color:rgba(255,255,255,0.66); margin:26px auto 42px; max-width:540px; line-height:1.7; }
+  .cta-row { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
+  .founders { display:flex; gap:40px; justify-content:center; margin-top:72px; padding-top:42px; border-top:1px solid rgba(255,255,255,0.12); flex-wrap:wrap; }
+  .fo { text-align:center; }
+  .fo .fo-dot { width:9px; height:9px; border-radius:50%; margin:0 auto 12px; }
+  .fo:nth-child(1) .fo-dot { background:var(--green); } .fo:nth-child(2) .fo-dot { background:var(--teal); } .fo:nth-child(3) .fo-dot { background:rgba(171,201,181,0.55); }
+  .fo .fo-name { font-family:var(--display); font-weight:600; font-size:16px; color:#fff; }
+  .fo .fo-role { font-family:var(--mono); font-size:10.5px; letter-spacing:.4px; color:rgba(255,255,255,0.45); margin-top:3px; }
+
+  /* ═════════ FOOTER ═════════ */
+  footer { background:#061827; color:#fff; padding:80px 0 36px; }
+  .foot-top { display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:48px; padding-bottom:56px; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .foot-brand img { height:30px; margin-bottom:22px; }
+  .foot-brand p { font-size:14px; color:rgba(255,255,255,0.55); font-weight:300; line-height:1.75; max-width:340px; }
+  .foot-col h5 { font-family:var(--mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--green); margin-bottom:20px; }
+  .foot-col ul { list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .foot-col a, .foot-col li { font-size:14px; color:rgba(255,255,255,0.6); font-weight:300; transition:color .25s var(--ease); }
+  .foot-col a:hover { color:var(--green); }
+  .foot-contact a { display:flex; align-items:center; gap:10px; }
+  .foot-contact svg { width:15px; height:15px; stroke:var(--green); fill:none; stroke-width:1.6; flex-shrink:0; }
+  .foot-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding-top:30px; }
+  .foot-bottom p { font-family:var(--mono); font-size:11.5px; color:rgba(255,255,255,0.4); }
+  .foot-social { display:flex; gap:10px; }
+  .foot-social a { width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,0.16); display:flex;
+    align-items:center; justify-content:center; transition:all .3s var(--ease); }
+  .foot-social a:hover { background:var(--green); border-color:var(--green); transform:translateY(-2px); }
+  .foot-social svg { width:16px; height:16px; stroke:rgba(255,255,255,0.7); fill:none; stroke-width:1.6; transition:stroke .3s var(--ease); }
+  .foot-social a:hover svg { stroke:var(--navy); }
+  @media (max-width:820px){ .foot-top{grid-template-columns:1fr 1fr;} .foot-brand{grid-column:1 / -1;} }
+  @media (max-width:480px){ .foot-top{grid-template-columns:1fr; gap:36px;} .founders{gap:28px;} }
+  /* Export / print / reduced-motion safety: never leave scroll-revealed content hidden */
+  @media print, (prefers-reduced-motion: reduce) {
+    .reveal, .stagger > * { opacity:1 !important; transform:none !important; }
+    .stack { height:auto; perspective:none; display:flex; flex-direction:column; gap:14px; }
+    .stack .layer { position:relative; height:auto; transform:none !important; opacity:1 !important; box-shadow:var(--shadow-md); }
+    #trust .trust-svg path { stroke-dashoffset:0 !important; }
+    .pipe-line .fill { transform:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="readbar"></div>
+
+<!-- NAV -->
+<nav id="nav" class="on-dark">
+  <a href="#hero" class="nav-logo" aria-label="Aleph BI">
+    <img src="assets/aleph-logo-white.png" class="lw" alt="Aleph BI">
+    <img src="assets/aleph-logo-navy.png" class="ln" alt="Aleph BI">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#thesis">Propósito</a></li>
+    <li><a href="#layers">Las capas</a></li>
+    <li><a href="#trust">Confianza</a></li>
+    <li><a href="#why">Por qué Aleph</a></li>
+    <li><a href="#services">Servicios</a></li>
+    <li><a href="#target">Cliente ideal</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Agenda una llamada</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="on-navy" data-screen-label="Hero">
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="hero-glow"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-tag"><span class="pin">ABI</span> Arquitectura de datos · Inteligencia · Ciberseguridad</div>
+    <h1 class="hero-title">
+      <span class="line"><span>Inteligencia pura.</span></span>
+      <span class="line"><span><em class="accent">Sistemas seguros.</em></span></span>
+    </h1>
+    <p class="hero-sub">Diseñamos la arquitectura que convierte datos dispersos en decisiones, y la <strong>protegemos en cada capa</strong> desde el primer día. Inteligencia y seguridad no se venden por separado — son la misma estructura.</p>
+    <div class="hero-cta">
+      <a href="#cta" class="btn btn-fill magnetic">Agenda una llamada
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="#layers" class="btn btn-outline">Ver cómo trabajamos</a>
+    </div>
+    <div class="hero-meta">
+      <div class="m"><b>3 capas, 1 estándar</b><span>datos · inteligencia · seguridad</span></div>
+      <div class="m"><b>Medellín, Colombia</b><span>operando en toda LATAM</span></div>
+      <div class="m"><b>Seguro desde el diseño</b><span>no parcheado después</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><div class="barv"></div></div>
+</section>
+
+<!-- THESIS -->
+<section id="thesis" data-screen-label="Propósito">
+  <div class="wrap">
+    <div class="thesis-grid">
+      <div class="reveal">
+        <div class="eyebrow"><span class="dot"></span>Por qué existimos</div>
+        <h2 class="thesis-statement">La información es poder. Solo si está <em>bien construida</em> — y <em>bien protegida.</em></h2>
+      </div>
+      <div class="thesis-body reveal d2">
+        <p>Las organizaciones acumulan datos pero no los entienden. Construyen sistemas pero no los aseguran. <strong>Existimos para cambiar eso.</strong></p>
+        <p>Diseñamos arquitecturas de información que convierten datos en decisiones inteligentes, e integramos ciberseguridad en cada capa del sistema desde el primer día.</p>
+        <div class="thesis-quote">No vendemos tecnología. Diseñamos la estructura donde la inteligencia se vuelve confiable.</div>
+      </div>
+    </div>
+    <!-- pipeline -->
+    <div id="pipeline">
+      <div class="pipe-track">
+        <div class="pipe-line"><div class="fill"></div></div>
+        <div class="pstep"><div class="node"></div><div class="pn">01</div><h4>Diagnosticar</h4><p>Auditoría de datos y vulnerabilidades. Vemos lo que hay antes de tocar nada.</p></div>
+        <div class="pstep"><div class="node"></div><div class="pn">02</div><h4>Arquitectar</h4><p>Diseñamos la infraestructura de información que tu operación necesita.</p></div>
+        <div class="pstep"><div class="node"></div><div class="pn">03</div><h4>Conectar</h4><p>Integración segura de sistemas. Una sola fuente de verdad.</p></div>
+        <div class="pstep"><div class="node"></div><div class="pn">04</div><h4>Proteger</h4><p>Ciberseguridad end-to-end, embebida en cada capa del sistema.</p></div>
+        <div class="pstep"><div class="node"></div><div class="pn">05</div><h4>Decidir</h4><p>Inteligencia en tiempo real para decidir con confianza.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAYERS -->
+<section id="layers" data-screen-label="Las tres capas">
+  <div class="wrap layers-grid">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>La arquitectura Aleph</div>
+      <h2 class="sec-title">Tres capas.<br>Una sola estructura.</h2>
+      <p class="sec-lead">No son productos separados que vendemos por catálogo. Son las capas de un mismo sistema: los datos sostienen la inteligencia, y la seguridad envuelve a las dos. Quita una y el resto se cae.</p>
+    </div>
+    <div class="stack reveal d2" id="stack">
+      <div class="layer l1">
+        <div class="l-row">
+          <div class="l-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
+          <div><div class="l-tag">Capa base</div><h4>Arquitectura de Datos</h4></div>
+        </div>
+        <p>Data lakes, warehouses, pipelines y modelos que transforman el caos informacional en claridad estructural.</p>
+      </div>
+      <div class="layer l2">
+        <div class="l-row">
+          <div class="l-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12.5" y="7" width="3" height="10" rx="1"/><rect x="18" y="13" width="3" height="4" rx="1"/></svg></div>
+          <div><div class="l-tag">Capa de decisión</div><h4>Business Intelligence</h4></div>
+        </div>
+        <p>Dashboards ejecutivos, modelos analíticos y reportes que convierten datos en ventaja competitiva real.</p>
+      </div>
+      <div class="layer l3">
+        <div class="l-row">
+          <div class="l-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div><div class="l-tag">Capa que envuelve</div><h4>Ciberseguridad</h4></div>
+        </div>
+        <p>Protección embebida en el diseño: identidades, auditorías y respuesta. Un dato sin proteger no decide — es riesgo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section id="trust" class="on-navy" data-screen-label="Triángulo de confianza">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="dot"></span>El triángulo de confianza</div>
+      <h2 class="sec-title">Inteligencia segura.<br>No hay otra clase.</h2>
+      <p class="sec-lead">En Aleph los sistemas de información y la ciberseguridad son las dos caras de la misma arquitectura. Un dato que no está protegido no sirve para decidir — es un vector de riesgo.</p>
+    </div>
+    <div class="trust-figure">
+      <svg class="trust-svg" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M50 5 L92 55 L8 55 Z"/>
+      </svg>
+      <div class="triad stagger">
+        <div class="tri">
+          <div class="t-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div>
+          <h4>Datos confiables</h4>
+          <p>Sin una arquitectura sólida no hay inteligencia: solo dashboards bonitos sobre datos rotos.</p>
+          <span class="t-tag">Estructura</span>
+        </div>
+        <div class="tri">
+          <div class="t-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+          <h4>Inteligencia aplicada</h4>
+          <p>Modelos y analítica que amplifican la capacidad de decisión humana — no la reemplazan.</p>
+          <span class="t-tag">Decisión</span>
+        </div>
+        <div class="tri">
+          <div class="t-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5l-8-3Z"/></svg></div>
+          <h4>Seguridad integrada</h4>
+          <p>Cada sistema entregado incluye su capa de seguridad desde el diseño, no añadida al final.</p>
+          <span class="t-tag">Protección</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHETYPES -->
+<section id="arch" data-screen-label="Personalidad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="dot"></span>La personalidad que guía todo</div>
+      <h2 class="sec-title">Inteligencia sin arrogancia.<br>Seguridad sin paranoia.</h2>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-card main reveal">
+        <div class="arch-tag">Arquetipo principal</div>
+        <h3>El Arquitecto</h3>
+        <div class="arch-quote">"Ve la estructura donde otros ven caos. Construye para durar."</div>
+        <p>Pensamos en sistemas, no en parches. Antes de proponer una herramienta diseñamos la estructura que la sostiene. Orden, lógica y una obsesión por construir cosas que aguanten el tiempo.</p>
+      </div>
+      <div class="arch-card sup reveal d2">
+        <div class="arch-tag">Arquetipo de apoyo</div>
+        <h3>El Guardián</h3>
+        <div class="arch-quote">"Proteger no es paranoia — es la condición de la confianza."</div>
+        <p>La seguridad no es un módulo que se vende aparte: es la base que hace que todo lo demás se pueda confiar. Cuidamos lo que construimos como si fuera nuestro.</p>
+      </div>
+    </div>
+    <div class="arch-note reveal">Directo y técnico, pero humano. Confiados sin arrogancia. Educamos, no presionamos.</div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why" data-screen-label="Por qué Aleph">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="dot"></span>Por qué elegir Aleph</div>
+      <h2 class="sec-title">Diseñamos inteligencia.<br>La protegemos. La entregamos<br>lista para decidir.</h2>
+    </div>
+    <div class="rtbs">
+      <div class="rtb reveal"><div class="rn">01</div><h4>Arquitectura antes que herramientas.</h4><p>Antes de instalar cualquier solución, diseñamos la arquitectura de datos que tu organización necesita. Sin estructura no hay inteligencia — solo dashboards bonitos sobre datos rotos.</p></div>
+      <div class="rtb reveal d1"><div class="rn">02</div><h4>Ciberseguridad integrada, no añadida.</h4><p>Cada sistema entregado incluye su capa de seguridad desde el diseño. No vendemos BI por un lado y seguridad por otro — los dos son inseparables en cada proyecto Aleph.</p></div>
+      <div class="rtb reveal d2"><div class="rn">03</div><h4>Tres perfiles. Un estándar único.</h4><p>Datos · Tecnología · Estrategia. En cada proyecto están los tres ejes: visión técnica de arquitectura, capa de seguridad e inteligencia de negocio que lo convierte todo en decisión.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section id="metrics" class="on-navy" data-screen-label="Métricas">
+  <div class="met-glow"></div>
+  <div class="wrap">
+    <div class="met-grid">
+      <div class="met reveal"><div class="val"><span data-count="120" data-suffix="+">0</span></div><div class="lab">Arquitecturas de datos<br>en producción</div></div>
+      <div class="met reveal d1"><div class="val"><span data-count="8500">0</span></div><div class="lab">Horas operativas<br>recuperadas al año</div></div>
+      <div class="met reveal d2"><div class="val"><span data-count="35" data-suffix="+">0</span></div><div class="lab">Empresas acompañadas<br>en LATAM</div></div>
+      <div class="met reveal d3"><div class="val"><span data-count="100" data-suffix="%">0</span></div><div class="lab">Sistemas con seguridad<br>desde el diseño</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" data-screen-label="Servicios">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><span class="dot"></span>Qué construimos contigo</div>
+      <h2 class="sec-title">Seis frentes. Una<br>misma arquitectura.</h2>
+      <p class="sec-lead">Se combinan según lo que tu operación necesita. Cada uno hereda el mismo estándar: estructura primero, seguridad siempre.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc reveal"><span class="num">01</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+        <h3>Arquitectura de Datos</h3>
+        <p>Data lakes, warehouses, pipelines y modelos que transforman el caos en claridad estratégica.</p>
+      </div>
+      <div class="svc reveal d1"><span class="num">02</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Ciberseguridad Empresarial</h3>
+        <p>Hardening, auditorías de vulnerabilidades, gestión de identidades y respuesta ante incidentes.</p>
+        <span class="svc-badge">Servicio core</span>
+      </div>
+      <div class="svc reveal d2"><span class="num">03</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12.5" y="7" width="3" height="10" rx="1"/><rect x="18" y="13" width="3" height="4" rx="1"/></svg></div>
+        <h3>Business Intelligence</h3>
+        <p>Dashboards ejecutivos y sistemas de reporte que convierten datos en ventaja competitiva.</p>
+      </div>
+      <div class="svc reveal"><span class="num">04</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Sistemas de Información Seguros</h3>
+        <p>ERP, CRM y apps propietarias con ciberseguridad embebida en el diseño, no al final.</p>
+        <span class="svc-badge">Diferenciador</span>
+      </div>
+      <div class="svc reveal d1"><span class="num">05</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+        <h3>IA Aplicada a la Decisión</h3>
+        <p>Modelos predictivos, automatización inteligente y asistentes de datos que amplifican al equipo.</p>
+      </div>
+      <div class="svc reveal d2"><span class="num">06</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div>
+        <h3>Auditoría &amp; Gobierno del Dato</h3>
+        <p>Calidad, trazabilidad, cumplimiento normativo y políticas de gobernanza de información.</p>
+        <span class="svc-badge">Diferenciador</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TARGET -->
+<section id="target" data-screen-label="Cliente ideal">
+  <div class="wrap tgt-grid">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>A quién servimos mejor</div>
+      <h2 class="sec-title">Para quién<br>construimos.</h2>
+      <p class="sec-lead">Empresas con operación real y ganas de ordenarla, donde una arquitectura bien resuelta se nota en el resultado — y donde proteger los datos ya no es opcional.</p>
+      <div class="chips">
+        <span class="chip">50–500 empleados</span>
+        <span class="chip">Operación en crecimiento</span>
+        <span class="chip">Datos dispersos</span>
+        <span class="chip">Procesos manuales</span>
+      </div>
+      <div class="fit">
+        <div class="fk">50–500</div>
+        <div class="fl">empleados — el punto donde estructurar, decidir y proteger genera el mayor impacto.</div>
+      </div>
+    </div>
+    <div class="tgt-cards reveal d2">
+      <div class="tgt-c">
+        <div class="tc-ico"><svg viewBox="0 0 48 48" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h22v18H4z"/><path d="M26 20h9l5 6v6h-14z"/><circle cx="13" cy="36" r="3.5"/><circle cx="33" cy="36" r="3.5"/></svg></div>
+        <h4>Logística</h4><p>Rutas, inventarios y entregas con visibilidad de punta a punta.</p>
+      </div>
+      <div class="tgt-c">
+        <div class="tc-ico"><svg viewBox="0 0 48 48" stroke-linecap="round" stroke-linejoin="round"><path d="M6 40V20l10 6V20l10 6V14l10 6v20z"/><path d="M6 40h36"/><path d="M14 33v3M24 33v3M34 33v3"/></svg></div>
+        <h4>Manufactura</h4><p>Producción, mantenimiento y calidad medidos en tiempo real.</p>
+      </div>
+      <div class="tgt-c">
+        <div class="tc-ico"><svg viewBox="0 0 48 48" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16h32l-2 24H10z"/><path d="M16 16a8 8 0 0 1 16 0"/><path d="M8 16 10 8h28l2 8"/></svg></div>
+        <h4>Retail</h4><p>Ventas, rotación y demanda conectadas para decidir mejor.</p>
+      </div>
+      <div class="tgt-c">
+        <div class="tc-ico"><svg viewBox="0 0 48 48" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8h20v24a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z"/><path d="M14 26h20"/><circle cx="19" cy="31" r="1.6"/><circle cx="29" cy="31" r="1.6"/><path d="M19 8V4h10v4"/></svg></div>
+        <h4>Transporte</h4><p>Flotas, tiempos y costos optimizados con datos confiables.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" class="on-navy" data-screen-label="CTA final">
+  <div class="cta-glow"></div>
+  <div class="wrap cta-inner">
+    <h2 class="cta-title reveal">Construyamos tu <span class="accent">arquitectura.</span></h2>
+    <p class="cta-sub reveal d1">Una llamada de 30 minutos. Sin compromiso, sin tecnicismos vacíos. Salimos con un primer mapa de tu arquitectura de datos y sus puntos ciegos de seguridad.</p>
+    <div class="cta-row reveal d2">
+      <a href="mailto:gerencia@alephconsulting.co" class="btn btn-fill magnetic">Agenda una llamada
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="https://wa.me/573146840773" class="btn btn-outline">Escríbenos por WhatsApp</a>
+    </div>
+    <div class="founders reveal">
+      <div class="fo"><div class="fo-dot"></div><div class="fo-name">Sebas</div><div class="fo-role">CEO · Dirección &amp; Ciberseguridad</div></div>
+      <div class="fo"><div class="fo-dot"></div><div class="fo-name">Juancho</div><div class="fo-role">CTO · Arquitectura &amp; Tecnología</div></div>
+      <div class="fo"><div class="fo-dot"></div><div class="fo-name">Juanjo</div><div class="fo-role">CMO · MarTech &amp; Estrategia</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer data-screen-label="Footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="assets/aleph-logo-white.png" alt="Aleph BI">
+        <p>Arquitectura de datos, inteligencia de negocio y ciberseguridad. Diseñamos la estructura donde la información se vuelve decisión — y la protegemos en cada capa.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Servicios</h5>
+        <ul>
+          <li><a href="#services">Arquitectura de Datos</a></li>
+          <li><a href="#services">Ciberseguridad</a></li>
+          <li><a href="#services">Business Intelligence</a></li>
+          <li><a href="#services">Sistemas Seguros</a></li>
+          <li><a href="#services">IA aplicada</a></li>
+        </ul>
+      </div>
+      <div class="foot-col foot-contact">
+        <h5>Contacto</h5>
+        <ul>
+          <li><a href="mailto:gerencia@alephconsulting.co"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>gerencia@alephconsulting.co</a></li>
+          <li><a href="https://wa.me/573146840773"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>+57 314 6840773</a></li>
+          <li><a href="#"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>Medellín, Colombia</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 Aleph BI · Business Intelligence</p>
+      <div class="foot-social">
+        <a href="https://instagram.com/aleph.abi" aria-label="Instagram"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://linkedin.com/alephbi" aria-label="LinkedIn"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-3a2 2 0 0 1 4 0v3"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // reveal the layer stack as a group when it enters
+  (function(){
+    // hero entrance gate — fires even in background tabs (timer + load both fire)
+    function ready(){ document.body.classList.add('ready'); }
+    if (document.readyState !== 'loading') requestAnimationFrame(ready);
+    else document.addEventListener('DOMContentLoaded', function(){ requestAnimationFrame(ready); });
+    setTimeout(ready, 140);
+    window.addEventListener('load', ready);
+
+    var stack = document.getElementById('stack');
+    if (stack) {
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting){ stack.classList.add('vis'); io.disconnect(); } });
+      }, { threshold: 0.3 });
+      io.observe(stack);
+    }
+  })();
+</script>
+<script src="aleph-vertice.js"></script>
+</body>
+</html>
